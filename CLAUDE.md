@@ -26,7 +26,7 @@
   HMAC-SHA256 blind index with a separate key (`phone_bidx`). Keys from env or `.env`; created only when
   BOTH are absent; one missing/invalid → refuse. Fingerprint over BOTH keys in `meta`; refuse on mismatch.
 - Event payloads are stored via an allowlist (`disposition_code`, `overridden_by`, `reason`,
-  `duration_sec`); raw JSON lines are never stored. Never print names, phones or raw rows.
+  `duration_sec`, `end_reason`); raw JSON lines are never stored. Never print names, phones or raw rows.
 - Schema-driven: lead ingestion reads field definitions from `assignment-a-data/schemas/*.json`;
   no workflow names hard-coded in logic.
 - Pure functions for parsing (`normalize.py`) and derived facts (`facts.py`); DB code stays thin.

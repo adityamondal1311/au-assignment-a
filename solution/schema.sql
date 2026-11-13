@@ -42,12 +42,15 @@ CREATE TABLE IF NOT EXISTS leads (
     UNIQUE (workflow_id, phone_bidx)
 );
 
+-- Keyed by source_key (the logical file), not batch_id: the same batch stem can arrive in
+-- several drops, and each file's rejected rows must all be kept.
 CREATE TABLE IF NOT EXISTS rejections (
+    source_key  TEXT NOT NULL,
     workflow_id TEXT NOT NULL,
     batch_id    TEXT NOT NULL,
     row_number  INTEGER NOT NULL,
     reason      TEXT NOT NULL,
-    PRIMARY KEY (workflow_id, batch_id, row_number)
+    PRIMARY KEY (source_key, row_number)
 );
 
 -- The interaction ledger: every distinct event, exactly as received (minus plaintext phone).

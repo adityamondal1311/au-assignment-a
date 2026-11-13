@@ -15,27 +15,35 @@ from pathlib import Path
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 ENC_VAR, BIDX_VAR = "AU_ENC_KEY", "AU_BIDX_KEY"
+# Repo-root .env, independent of the current working directory.
+DEFAULT_ENV_FILE = Path(__file__).resolve().parent.parent / ".env"
 
 
 def _read_env_file(path: Path) -> dict[str, str]:
     values: dict[str, str] = {}
     if path.exists():
-        for line in path.read_text(encoding="utf-8").splitlines():
+        # utf-8-sig: tolerate a BOM (Windows editors), which would otherwise hide the first key.
+        for line in path.read_text(encoding="utf-8-sig").splitlines():
             if "=" in line and not line.lstrip().startswith("#"):
                 k, v = line.split("=", 1)
                 values[k.strip()] = v.strip()
     return values
 
 
-def load_or_create_keys(env_file: Path = Path(".env")) -> tuple[bytes, bytes]:
+def load_or_create_keys(env_file: Path = DEFAULT_ENV_FILE) -> tuple[bytes, bytes]:
     file_values = _read_env_file(env_file)
     enc = os.environ.get(ENC_VAR) or file_values.get(ENC_VAR)
     bidx = os.environ.get(BIDX_VAR) or file_values.get(BIDX_VAR)
     if enc is None and bidx is None:                      # first run: create both
         enc = base64.b64encode(os.urandom(32)).decode()
         bidx = base64.b64encode(os.urandom(32)).decode()
+        sep = ""
+        if env_file.exists():
+            existing = env_file.read_bytes()
+            if existing and not existing.endswith(b"\n"):
+                sep = "\n"                                # don't glue our key onto the last line
         with env_file.open("a", encoding="utf-8") as fh:
-            fh.write(f"{ENC_VAR}={enc}\n{BIDX_VAR}={bidx}\n")
+            fh.write(f"{sep}{ENC_VAR}={enc}\n{BIDX_VAR}={bidx}\n")
     elif enc is None or bidx is None:                     # partial config: never silently regenerate
         raise SystemExit(f"Only one of {ENC_VAR}/{BIDX_VAR} is set. Restore the missing key.")
     keys = []
