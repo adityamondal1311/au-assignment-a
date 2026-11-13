@@ -45,6 +45,7 @@
 - `solution/tests/`         pytest
 
 ## Commands
+- ALWAYS use the venv interpreter: `.venv/Scripts/python` (e.g. `.venv/Scripts/python -m pytest -q`). Bare `python` may be the system Python without our dependencies.
 - Tests: `python -m pytest -q`
 - Generate data: `python assignment-a-data/tools/generate_data.py --seed 42 --scale small --out data`
 - Ingest: `python -m solution ingest data/drop_1 [more paths...] [--db FILE]`
