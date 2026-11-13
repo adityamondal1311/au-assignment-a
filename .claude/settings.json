@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m pytest *)",
+      "Bash(python -m pytest)",
+      "Bash(python -m solution *)",
+      "Bash(python -m solution.verify *)",
+      "Bash(python assignment-a-data/tools/generate_data.py *)",
+      "Bash(git status)",
+      "Bash(git diff *)",
+      "Bash(git diff)",
+      "Bash(git log *)",
+      "Bash(ls *)",
+      "Bash(head *)",
+      "Bash(wc *)"
+    ],
+    "deny": [
+      "Bash(git push *)",
+      "Bash(git push)",
+      "Bash(git reset --hard *)",
+      "Bash(rm -rf *)",
+      "Read(./.env)",
+      "Edit(./assignment-a-data/**)",
+      "Edit(./assignment-b-workflow/**)",
+      "Edit(./docs/GLOSSARY.md)",
+      "Edit(./README.md)"
+    ]
+  }
+}
