@@ -58,6 +58,14 @@ def reference_field(schema: dict[str, Any]) -> str:
     return refs[0]
 
 
+def phone_field(schema: dict[str, Any]) -> str:
+    """Name of the single field of type "phone" (lead identity; also stored inside pii_enc)."""
+    phones = [f["name"] for f in schema["fields"] if f["type"] == "phone"]
+    if len(phones) != 1:
+        raise ValueError(f"{schema.get('workflow_id')}: expected exactly one phone field, got {phones}")
+    return phones[0]
+
+
 def pii_fields(schema: dict[str, Any]) -> list[str]:
     """Fields marked "pii": true, in schema order (stored only inside pii_enc)."""
     return [f["name"] for f in schema["fields"] if f.get("pii") is True]

@@ -95,13 +95,6 @@ def _to_json(v: Any) -> Any:
     return v
 
 
-def _phone_field(schema: dict[str, Any]) -> str:
-    phones = [f["name"] for f in schema["fields"] if f["type"] == "phone"]
-    if len(phones) != 1:
-        raise ValueError(f"{schema['workflow_id']}: expected exactly one phone field, got {phones}")
-    return phones[0]
-
-
 def _overlay(target: dict[str, Any], new: dict[str, Any]) -> None:
     """Duplicates: overwrite only where the new value is non-null (null never erases)."""
     for k, v in new.items():
@@ -136,7 +129,7 @@ def ingest_lead_file(con: sqlite3.Connection, vault: Vault, schemas: dict[str, d
     batch_id = path.stem
     pii_names = set(config.pii_fields(schema))
     ref_name = config.reference_field(schema)
-    phone_name = _phone_field(schema)
+    phone_name = config.phone_field(schema)
     stats = {"skipped": False, "source_key": source_key, "workflow_id": workflow_id,
              "batch_id": batch_id, "rows_total": 0, "rows_rejected": 0, "rows_merged": 0,
              "field_warnings": 0, "header_collisions": []}
